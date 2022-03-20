@@ -1,5 +1,5 @@
 CXX        = g++
-LINKERLIBS = -lSDL
+LINKERLIBS = -lSDL -lX11
 CXXFLAGS   = -std=c++17 -g
 OBJS       = quickcg.o main.o
 OUT        = space-invaders

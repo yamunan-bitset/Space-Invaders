@@ -1,9 +1,12 @@
+#include <X11/Xlib.h>
 #include "quickcg.h"
 using namespace QuickCG;
 
 struct SpaceShip
 {
-  double x = 240;
+  SpaceShip(XWindowAttributes attr_) : attr(attr_) {}
+  XWindowAttributes attr;
+  double x = attr.height - 100;
   double dx;
   double y = 10;
   unsigned offset = 10;
@@ -13,9 +16,12 @@ struct SpaceShip
 
 int main(int argc, char** argv)
 {
-  screen(256, 256, 0, "Space Invaders");
+  Display* display = XOpenDisplay(NULL);
+  XWindowAttributes attr;
+  XGetWindowAttributes(display, DefaultRootWindow(display), &attr);
+  screen(attr.width, attr.height, 0, "Space Invaders");
   bool running = true;
-  SpaceShip ship;
+  SpaceShip ship(attr);
   double incr = 0.1;
   bool send_bullet = false;
   while (running)
@@ -31,8 +37,11 @@ int main(int argc, char** argv)
         ship.dx -= incr;
       if (keyDown(SDLK_RIGHT))
         ship.dx += incr;
+      // Draw Ship
       drawRect(ship.x, ship.y, ship.x+ship.offset, ship.y+ship.offset, RGB_Green);
-      pset(POSX, 240, RGB_White);
+      // Draw Target
+      drawRect(POSX, attr.height - 20, POSX + 10, attr.height - 10, RGB_White);
+      // Draw Bullet
       if (send_bullet)
 	{ // TODO
 	}
