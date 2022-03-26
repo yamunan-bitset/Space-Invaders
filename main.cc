@@ -6,7 +6,7 @@ struct SpaceShip
 {
   SpaceShip(XWindowAttributes attr_) : attr(attr_) {}
   XWindowAttributes attr;
-  double x = attr.height - 100;
+  double x = attr.width - 100;
   double dx;
   double y = 10;
   unsigned offset = 10;
@@ -21,9 +21,10 @@ int main(int argc, char** argv)
   bool running = true;
   SpaceShip ship(attr);
   double incr = attr.width / 1000;
-  bool send_bullet = false;
   short target_move = 2;
   bool negate = false;
+  bool moving_bullet = false;
+  unsigned bullet_x = ship.x, bullet_y = ship.y;
   while (running)
     {
       cls(RGB_Black);
@@ -31,7 +32,7 @@ int main(int argc, char** argv)
       if (keyDown(SDLK_q))
 	running = false;
       if (keyDown(SDLK_SPACE))
-	send_bullet = true;
+	moving_bullet = true;
       if (keyDown(SDLK_LEFT))
         ship.x -= incr;
       if (keyDown(SDLK_RIGHT))
@@ -41,15 +42,17 @@ int main(int argc, char** argv)
       // Draw Target
       for (unsigned i = target_move; i < target_move + 200; i += 50)
 	drawRect(i, attr.height - 40, i + 10, attr.height - 30, RGB_White);
-      // Draw Bullet
-      if (send_bullet)
-	{ // TODO
-	}
       ship.dx = 0;
       if (getTicks() % 5 == 0) target_move += 1;
       if (target_move == attr.width) negate = true;
       if (target_move == 1) target_move = -target_move;
       if (negate) target_move = -target_move;
+      if (moving_bullet)
+	{
+	  pset(bullet_x, bullet_y, ColorRGB(255, 10, 80));
+	  bullet_y++;
+	  if (bullet_y == attr.height) moving_bullet = false;
+	}
       redraw();
     }  
   return 0;
