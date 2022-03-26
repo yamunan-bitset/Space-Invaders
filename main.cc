@@ -7,7 +7,6 @@ struct SpaceShip
   SpaceShip(XWindowAttributes attr_) : attr(attr_) {}
   XWindowAttributes attr;
   double x = attr.width - 100;
-  double dx;
   double y = 10;
   unsigned offset = 10;
 };
@@ -20,7 +19,7 @@ int main(int argc, char** argv)
   screen(attr.width, attr.height, 0, "Space Invaders");
   bool running = true;
   SpaceShip ship(attr);
-  double incr = attr.width / 1000;
+  double incr = attr.width / 100;
   short target_move = 2;
   bool negate = false;
   bool moving_bullet = false;
@@ -37,12 +36,13 @@ int main(int argc, char** argv)
         ship.x -= incr;
       if (keyDown(SDLK_RIGHT))
         ship.x += incr;
+      if (ship.x < 0) ship.x = 1;
+      if (ship.x > attr.width) ship.x = attr.width - 50;
       // Draw Ship
-      drawRect(ship.x + ship.dx, ship.y, ship.x + ship.dx + ship.offset, ship.y + ship.offset, RGB_Green);
+      drawRect(ship.x, ship.y, ship.x + ship.offset, ship.y + ship.offset, RGB_Green);
       // Draw Target
-      for (unsigned i = target_move; i < target_move + 200; i += 50)
+      for (unsigned i = target_move; i < target_move + 200; i += incr)
 	drawRect(i, attr.height - 40, i + 10, attr.height - 30, RGB_White);
-      ship.dx = 0;
       if (getTicks() % 5 == 0) target_move += 1;
       if (target_move == attr.width) negate = true;
       if (target_move == 1) target_move = -target_move;
