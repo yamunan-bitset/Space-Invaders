@@ -22,10 +22,10 @@ int main(int argc, char** argv)
   SpaceShip ship(attr);
   double incr = attr.width / 1000;
   bool send_bullet = false;
-  double target_move = 1;
+  short target_move = 2;
+  bool negate = false;
   while (running)
     {
-      // ship.x += ship.dx; // FIXME: ship x axis not displacing
       cls(RGB_Black);
       readKeys();
       if (keyDown(SDLK_q))
@@ -46,9 +46,11 @@ int main(int argc, char** argv)
 	{ // TODO
 	}
       ship.dx = 0;
-      target_move += 0.1;
+      if (getTicks() % 5 == 0) target_move += 1;
+      if (target_move == attr.width) negate = true;
+      if (target_move == 1) target_move = -target_move;
+      if (negate) target_move = -target_move;
       redraw();
-    }
-  
+    }  
   return 0;
 }
